@@ -1,0 +1,25 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PNPM_VERSION = "10"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production]
+  command = "pnpm build"
+  publish = "dist"
+
+[context.deploy-preview]
+  command = "pnpm build"
+  publish = "dist"
+
+[context.branch-deploy]
+  command = "pnpm build"
+  publish = "dist"
