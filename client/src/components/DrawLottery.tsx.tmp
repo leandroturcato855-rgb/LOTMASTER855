@@ -1,0 +1,19 @@
+
+  const handleExportToSupabase = async () => {
+    if (results.length === 0) {
+      toast.error("Nenhum resultado para exportar");
+      return;
+    }
+
+    try {
+      const success = await exportRankingToSupabase(results);
+      if (success) {
+        toast.success(`${results.length} resultado(s) exportado(s) para Supabase!`);
+      } else {
+        toast.error("Erro ao exportar para Supabase");
+      }
+    } catch (error) {
+      console.error("Erro ao exportar:", error);
+      toast.error("Erro ao exportar para Supabase");
+    }
+  };
