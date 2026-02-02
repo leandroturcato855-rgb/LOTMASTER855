@@ -170,6 +170,7 @@ export default function LastBolan() {
           ))}
         </div>
       </div>
+      </Card>
     </div>
   );
 }
