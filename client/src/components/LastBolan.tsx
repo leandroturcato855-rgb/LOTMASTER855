@@ -19,27 +19,32 @@ export default function LastBolan() {
 
   const fetchLastBolao = async () => {
     setIsLoading(true);
-    // Buscar o último bolão concluído
-    const { data: bolao } = await supabase
-      .from('bolões')
-      .select('*')
-      .eq('status', 'concluido')
-      .order('data_sorteio', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (bolao) {
-      setLastBolao(bolao);
-      // Buscar apostas desse bolão ordenadas por score
-      const { data: apostas } = await supabase
-        .from('apostas')
+    try {
+      // Buscar o último bolão concluído
+      const { data: bolao } = await supabase
+        .from('bolões')
         .select('*')
-        .eq('bolao_id', bolao.id)
-        .order('score', { ascending: false });
-      
-      if (apostas) setRanking(apostas);
+        .eq('status', 'concluido')
+        .order('data_sorteio', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (bolao) {
+        setLastBolao(bolao);
+        // Buscar apostas desse bolão ordenadas por score
+        const { data: apostas } = await supabase
+          .from('apostas')
+          .select('*')
+          .eq('bolao_id', bolao.id)
+          .order('score', { ascending: false });
+        
+        if (apostas) setRanking(apostas);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar último bolão:', err);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleCopyPublicLink = () => {
@@ -61,7 +66,13 @@ export default function LastBolan() {
     r.player_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (isLoading) return <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (!lastBolao) {
     return (
@@ -75,6 +86,7 @@ export default function LastBolan() {
 
   return (
     <div className="max-w-5xl space-y-6">
+      {/* Cabeçalho */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-black text-foreground mb-1 uppercase flex items-center gap-2">
@@ -130,7 +142,6 @@ export default function LastBolan() {
             className="pl-10 border-gray-200"
           />
         </div>
-
         <div className="space-y-3">
           {filteredRanking.map((result, idx) => (
             <div 
@@ -169,7 +180,6 @@ export default function LastBolan() {
             </div>
           ))}
         </div>
-      </div>
       </Card>
     </div>
   );
